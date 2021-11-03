@@ -38,6 +38,17 @@ void kernelPrintV(const char * pMessage,...){
 	//Kernel.write_log(message);
 }
 
+
+
+//Sleep timer handler function
+void sleepTimerHandler(unsigned hTimer, void *pParam, void *pContext)
+{
+	Task *pTask = (Task *)pParam;
+	pTask->pSysCall->print("sleepTimerHandler is called ");
+	
+
+}
+
 /*KERNEL task: TASK ID=0; TASK NUM = 0;
  * 	//The kernel routine: all the kernel codes starts here
  * 	Kernel task doesn't participate scheduling: it's not runnable
@@ -59,8 +70,14 @@ void kernelTaskRun(Task * pTask)
 		if (NEEDTOSCHED == scheduler->SchedulerState ){
 			startScheduler(pTask, SCHED_FIFO);
 
-			// TODO: project 2
-
+			//TODO PROJECT 2
+		 	//@ricrabello implementation begins
+			pTask->pSysCall->print("The kernel task will sleep for 3 seconds");
+			pTask->pSysCall->sleep(pTask, 3000);
+			pTask->pSysCall->msSleep(pTask, 3000000);
+			pTask->pSysCall->print("The kernel task wakes up");
+			pTask->pSysCall->print("The kernel task is running");
+			//@ricrabello implementation ends
 		}
 	}
 }
