@@ -12,6 +12,7 @@ typedef void TKernelTimerHandler (unsigned hTimer, void *pParam, void *pContext)
 typedef struct
 {
 	void (*sleep)(void *pTask, unsigned nSeconds);
+	void (*msSleep)(void *pTask, unsigned miliseconds);
 	void (*yield)();
 	void (*exit)();
 	void (*print)(const char* message);

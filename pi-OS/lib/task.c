@@ -42,7 +42,7 @@ void InitializeRegs (Task * pTask)
 void TaskEntry (Task * pTask)
 {
 
-	//pTask->pSysCall->print("Task is entering now");
+	pTask->pSysCall->print("Task is entering now");
 	pTask->Run (pTask);
 
 	pTask->State = TaskStateTerminated;
@@ -71,20 +71,20 @@ void task2_run(Task * pTask)
 
 
 
-	//pTask->pSysCall->print("Task2 begins to run . ------");
-	//pTask->pSysCall->sleep(pTask, 3);
-	//pTask->pSysCall->print("Task2 begins to run . ------");
-	//pTask->pSysCall->sleep(pTask, 2);
-	//pTask->pSysCall->print("Task2 begins to run . ------");
-	//pTask->pSysCall->sleep(pTask, 3);
-	//pTask->pSysCall->print("Task2 has been done.-----");
+	pTask->pSysCall->print("Task2 begins to run . ------");
+	pTask->pSysCall->sleep(pTask, 3);
+	pTask->pSysCall->print("Task2 begins to run . ------");
+	pTask->pSysCall->sleep(pTask, 2);
+	pTask->pSysCall->print("Task2 begins to run . ------");
+	pTask->pSysCall->sleep(pTask, 3);
+	pTask->pSysCall->print("Task2 has been done.-----");
 }
 
 
 void task3_run(Task * pTask)
 {
 	pTask->pSysCall->print("Now we are in task3 .*****");
-	//  pTask->pSysCall->sleep();
+	//pTask->pSysCall->sleep(pTask, 10);
 	pTask->pSysCall->print("task3 is working .");
 	pTask->pSysCall->print("Task3 has been done.*****");
 }

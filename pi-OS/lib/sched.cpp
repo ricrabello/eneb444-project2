@@ -335,30 +335,95 @@ void sleep (Task *pTask, unsigned nSeconds)
  }
 }
 
+//sleepYieldPrepare() is called in the first stage of sleep
+void sleepYieldPrepare(unsigned seconds, void *pParam)
+{
+	//TODO
+
+	//@ricrabello start implementation
+	scheduler.pLastTask = scheduler.pCurrentTask; //change lastTask to currentTask
+	scheduler.lastTaskSwitchReason = APPSLEEPING; //change lastTaskSwitchReason to APPSLEEPING
+	scheduler.pCurrentTask = (Task *)pParam;	  //change current task to the task that is calling sleep
+
+	TTaskRegisters *pOldRegs = &(scheduler.pCurrentTask->Regs); //save current task's registers
+	TTaskRegisters *pNewRegs = &(scheduler.pLastTask->Regs);	//save last task's registers
+
+	msSleep((Task *)pParam, 100 * seconds); //sleep for the given time
+	//@ricrabello end implementation
+}
+
+//void sleepTimerHandler(unsigned hTimer, void *pParam, void *pContext);
+void sleepTimerHandler(void *pParam)
+{
+	Task *pTask = (Task *)pParam;
+	pTask->pSysCall->print("timer went off");
+	pTask->pSysCall->print("sleepTimerHandler is called ");
+
+	// TODO: project 2
+	//@ricrabello start implementation
+	pTask->State = TaskStateReady;							//change state to ready
+	pTask->pSysCall->print("Task State changed to Ready "); //print to check
+
+	sleepYieldPrepare(3, pTask);							//call sleepYieldPrepar to save context	
+
+	kernelYield();											//call kernelYield
+	//@ricrabello end implementation
+}
+
+//msSleep is in unit of 10ms function
 void msSleep (Task *pTask, unsigned nMilliSeconds)
 {
 	pTask->pSysCall->print("msSleep is called");
 
 	// TODO: project 2
 	// IMPORTANT: addKernelTimer is in unit of 10ms
-
+	//@ricrabello start implementation
+	pTask->pSysCall->print("addKernelTimer is called");							//print to check
+	pTask->State = TaskStateSleeping;											//change state to sleeping
+	pTask->pSysCall->print("TaskState changed to Sleeping");					//print to check
+	scheduler.lastTaskSwitchReason = APPSLEEPING;								//change lastTaskSwitchReason to APPSLEEPING
+	pTask->pSysCall->print("Reason added to scheduler");						//print to check
+	pTask->pSysCall->addKernelTimer(nMilliSeconds, sleepTimerHandler, pTask); 	//add timer to the kernel
+	pTask->pSysCall->print("sleep Time Handler will be called");				//print to check
+	sleepTimerHandler(pTask);													//call sleepTimerHandler
+	//@ricrabello end implementation
 
 }
 
 
-//This function is used by SVC second level handler
 //yieldPrepare() is called in the first stage of exit
 void yieldPrepare(){
-	//TODO
+
+	//@ricrabello start implementation
+
+	//changing scheduler.pCurrentTask to scheduler.pLastTask
+	scheduler.pLastTask = scheduler.pCurrentTask;							
+	scheduler.lastTaskSwitchReason = APPENDS;
+	scheduler.pCurrentTask = scheduler.taskQueue[TASKSCHEDNUM];			//swapping position of scheduler.pCurrentTask and scheduler.taskQueue[TASKSCHEDNUM]
+
+	TTaskRegisters *pOldRegs = &(scheduler.pCurrentTask->Regs);			//save current task's registers
+	TTaskRegisters *pNewRegs = &(scheduler.pLastTask->Regs);			//save last task's registers
+
+	//@ricrabello end implementation
 }
 
-//This function is used by SVC second level handler
-//sleepYieldPrepare() is called in the first stage of sleep
-void sleepYieldPrepare(unsigned seconds, void *pParam){
-	//TODO
+//@ricrabello moved this function up
+// //sleepYieldPrepare() is called in the first stage of sleep
+// void sleepYieldPrepare(unsigned seconds, void *pParam){
+// 	//TODO
 
-}
+// 	//@ricrabello start implementation
+// 	scheduler.pLastTask = scheduler.pCurrentTask;							//change lastTask to currentTask
+// 	scheduler.lastTaskSwitchReason = APPSLEEPING;							//change lastTaskSwitchReason to APPSLEEPING	
+// 	scheduler.pCurrentTask = (Task *)pParam;								//change current task to the task that is calling sleep
 
+
+// 	TTaskRegisters *pOldRegs = &(scheduler.pCurrentTask->Regs);			//save current task's registers
+// 	TTaskRegisters *pNewRegs = &(scheduler.pLastTask->Regs);			//save last task's registers
+
+// 	msSleep((Task *)pParam, 100 * seconds);									//sleep for the given time
+// 	//@ricrabello end implementation
+// }//@ricrabello moved this function end here
 
 int getCurrentTaskPointer(){
 	return (int)scheduler.pCurrentTask;
@@ -371,16 +436,5 @@ int getKernelRegPtr(){
 }
 
 
-void sleepTimerHandler (unsigned hTimer, void *pParam, void *pContext)
-{
-
-	Task *pTask = (Task *) pParam;
-	pTask->pSysCall->print("timer went off");
-	pTask->pSysCall->print("sleepTimerHandler is called ");
-
-	// TODO: project 2
-
-
-}
 
 

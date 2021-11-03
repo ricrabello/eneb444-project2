@@ -25,8 +25,9 @@ CIRCLEHOME ?= ..
 
 AARCH	 ?= 32
 RASPPI	 ?= 4
+PREFIX	 ?= arm-none-eabi-
 # PREFIX	 ?= "/home/jun/Desktop/ENEB_444/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi/bin/arm-none-eabi-"
-PREFIX	?= "/home/jun/Downloads/gcc-arm-10.2-2020.11-x86_64-arm-none-eabi/bin/arm-none-eabi-"
+# PREFIX	?= "/home/jun/Downloads/gcc-arm-10.2-2020.11-x86_64-arm-none-eabi/bin/arm-none-eabi-"
 
 # PREFIX64 ?= aarch64-none-elf-
 
