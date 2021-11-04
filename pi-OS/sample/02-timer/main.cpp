@@ -73,8 +73,7 @@ void kernelTaskRun(Task * pTask)
 			//TODO PROJECT 2
 		 	//@ricrabello implementation begins
 			pTask->pSysCall->print("The kernel task will sleep for 3 seconds");
-			pTask->pSysCall->sleep(pTask, 3000);
-			pTask->pSysCall->msSleep(pTask, 3000000);
+			pTask->pSysCall->msSleep(pTask, 3);
 			pTask->pSysCall->print("The kernel task wakes up");
 			pTask->pSysCall->print("The kernel task is running");
 			//@ricrabello implementation ends
